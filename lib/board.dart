@@ -33,7 +33,7 @@ class GameBoard extends StatefulWidget {
 
 class _GameBoardState extends State<GameBoard> {
   // current tetris piece
-  Piece currentPiece = Piece(type: Tetromino.T);
+  Piece currentPiece = Piece(type: Tetromino.L);
 
   @override
   void initState() {
@@ -41,8 +41,8 @@ class _GameBoardState extends State<GameBoard> {
     startGame();
 
     // frame refresh rate
-    Duration frameRate = const Duration(milliseconds: 200);
-    // gameLoop(frameRate);
+    Duration frameRate = const Duration(milliseconds: 600);
+    gameLoop(frameRate);
   }
 
   void startGame() {
@@ -129,35 +129,140 @@ class _GameBoardState extends State<GameBoard> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF0C134F),
-      body: GridView.builder(
-          itemCount: rowLength * colLength,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: rowLength),
-          itemBuilder: (context, index) {
-            // get row and col of each index
-            int row = (index / rowLength).floor();
-            int col = (index % rowLength);
+      body: Column(
+        children: [
+          //GAME  GRID
+          Expanded(
+            child: GridView.builder(
+                itemCount: rowLength * colLength,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: rowLength),
+                itemBuilder: (context, index) {
+                  // get row and col of each index
+                  int row = (index / rowLength).floor();
+                  int col = (index % rowLength);
 
-            //current piece
-            if (currentPiece.position.contains(index)) {
-              return Pixel(
-                colour: Colors.yellow,
-                childWidget: index,
-              );
-            } else if (gameBoard[row][col] != null) {
-              return Pixel(colour: Colors.pink, childWidget: index);
-            } else {
-              return Pixel(colour: const Color(0xFF1D267D), childWidget: index);
-            }
-          }),
+                  //current piece
+                  if (currentPiece.position.contains(index)) {
+                    return Pixel(
+                      colour: tetromioColors[currentPiece.type] ?? Colors.white,
+                      childWidget: index,
+                    );
+                  }
+
+                  // landed piece
+                  else if (gameBoard[row][col] != null) {
+                    final Tetromino? tetrominoType = gameBoard[row][col];
+                    return Pixel(
+                        colour: tetromioColors[tetrominoType] ?? Colors.white,
+                        childWidget: index);
+                  }
+
+                  // blank pixel
+                  else {
+                    return Pixel(
+                        colour: const Color(0xFF1D267D), childWidget: index);
+                  }
+                }),
+          ),
+
+          // GAME CONTROLS
+          Padding(
+            padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // left and right Buttons
+                Row(
+                  children: [
+                    //left
+                    IconButton(
+                      onPressed: moveLeft,
+                      icon: const Icon(
+                        Icons.arrow_back_ios,
+                        color: Colors.white,
+                      ),
+                    ),
+
+                    // right
+                    IconButton(
+                      onPressed: moveRight,
+                      icon: const Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.white,
+                      ),
+                    ),
+
+                    // down
+                    IconButton(
+                      onPressed: moveDown,
+                      icon: const Icon(
+                        Icons.keyboard_arrow_down,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                    ),
+                  ],
+                ),
+
+                // // score
+                // const Text(
+                //   'Score : 0',
+                //   style: TextStyle(
+                //     color: Colors.white,
+                //     fontWeight: FontWeight.w500,
+                //     fontSize: 20,
+                //   ),
+                // ),
+
+                //rotate
+                IconButton(
+                  onPressed: rotatePiece,
+                  icon: const Icon(
+                    Icons.rotate_right,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
-}
 
-// Pixel(
-//           colour: currentPiece.position.contains(index)
-//               ? Colors.yellow
-//               : const Color(0xFF1D267D),
-//           childWidget: index,
-//         ),
+  void moveLeft() {
+    // make sure the move is valid before moving there
+    if (!checkCollision(Direction.left)) {
+      setState(() {
+        currentPiece.movePiece(Direction.left);
+      });
+    }
+  }
+
+  void moveRight() {
+    // make sure the move is valid before moving there
+    if (!checkCollision(Direction.right)) {
+      setState(() {
+        currentPiece.movePiece(Direction.right);
+      });
+    }
+  }
+
+  void moveDown() {
+    // make sure the move is valid before moving there
+    if (!checkCollision(Direction.down)) {
+      setState(() {
+        currentPiece.movePiece(Direction.down);
+      });
+    }
+  }
+
+  void rotatePiece() {
+    if (!checkCollision(Direction.left) && !checkCollision(Direction.right)) {
+      currentPiece.rotatePiece();
+    }
+  }
+}

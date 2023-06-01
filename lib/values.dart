@@ -1,4 +1,6 @@
 // Grid dimensions
+import 'package:flutter/material.dart';
+
 int rowLength = 10;
 int colLength = 15;
 
@@ -32,4 +34,14 @@ enum Tetromino { L, J, I, O, S, Z, T }
   @
   @ @
   @
-*/ 
+*/
+
+const Map<Tetromino, Color> tetromioColors = {
+  Tetromino.L: Colors.orangeAccent,
+  Tetromino.J: Colors.lightBlueAccent,
+  Tetromino.I: Colors.pinkAccent,
+  Tetromino.O: Colors.yellowAccent,
+  Tetromino.S: Colors.greenAccent,
+  Tetromino.Z: Colors.redAccent,
+  Tetromino.T: Colors.purpleAccent,
+};
