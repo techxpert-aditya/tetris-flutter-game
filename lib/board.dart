@@ -35,29 +35,87 @@ class _GameBoardState extends State<GameBoard> {
   // current tetris piece
   Piece currentPiece = Piece(type: Tetromino.L);
 
+  // score variable
+  int currentScore = 0;
+
+  //game over check variable
+  bool gameOver = false;
+
+  //init state
   @override
   void initState() {
     super.initState();
     startGame();
+  }
+
+  void startGame() {
+    currentPiece.initializePiece();
 
     // frame refresh rate
     Duration frameRate = const Duration(milliseconds: 600);
     gameLoop(frameRate);
   }
 
-  void startGame() {
-    currentPiece.initializePiece();
-  }
-
   void gameLoop(Duration frameRate) {
     Timer.periodic(frameRate, (timer) {
       setState(() {
+        // clear lines
+        clearLines();
         //check for the landing
         checkLanding();
+
+        //check if game is over or not
+        if (gameOver == true) {
+          timer.cancel();
+          showGameOverDialog();
+        }
         // move the current piece down
         currentPiece.movePiece(Direction.down);
       });
     });
+  }
+
+  // game over messege
+  void showGameOverDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Game Over'),
+        content: Text("Your score is: $currentScore"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              // Reset the game
+              resetGame();
+              Navigator.pop(context);
+            },
+            child: const Text('Play Again!'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // reset teh game
+  void resetGame() {
+    // clear the game board
+    gameBoard = List.generate(
+      colLength,
+      (i) => List.generate(
+        rowLength,
+        (j) => null,
+      ),
+    );
+
+    //new game
+    gameOver = false;
+    currentScore = 0;
+
+    // create new Piece
+    createNewPiece();
+
+    // start game again
+    startGame();
   }
 
   // check for collision in a future position
@@ -123,6 +181,57 @@ class _GameBoardState extends State<GameBoard> {
 
     currentPiece = Piece(type: randomType);
     currentPiece.initializePiece();
+
+    //let's check the game is over or not
+    if (isGameOver()) {
+      gameOver = true;
+    }
+  }
+
+  // clear lines
+  void clearLines() {
+    // step 1: loop through each row of the game board from bottom to top
+    for (int row = colLength - 1; row >= 0; row--) {
+      // step 2: Initialize a variable to track if the row is full
+      bool rowIsFull = true;
+
+      // step 3: check if the row is full or not
+      for (int col = 0; col < rowLength; col++) {
+        // if there's an empty column, set rowIsFull to false and break the loop
+        if (gameBoard[row][col] == null) {
+          rowIsFull = false;
+          break;
+        }
+      }
+
+      // step 4: if the row is full, we can clear it and shift the rows down
+      if (rowIsFull) {
+        // step 5: move all the rows above the cleard row down by one position
+        for (int r = row; r > 0; r--) {
+          // copy the abouve row to the current row
+          gameBoard[r] = List.from(gameBoard[r - 1]);
+        }
+
+        // step 6: set the top row to empty
+        gameBoard[0] = List.generate(row, (index) => null);
+
+        // step 7: increase the score
+        currentScore += 10;
+      }
+    }
+  }
+
+  // GAME OVER METHOD
+  bool isGameOver() {
+    // check if any columns in the top row are filled
+    for (int col = 0; col < rowLength; col++) {
+      if (gameBoard[0][col] != null) {
+        return true;
+      }
+    }
+
+    //if the top row is empty, the game isn't over yet
+    return false;
   }
 
   @override
@@ -206,15 +315,15 @@ class _GameBoardState extends State<GameBoard> {
                   ],
                 ),
 
-                // // score
-                // const Text(
-                //   'Score : 0',
-                //   style: TextStyle(
-                //     color: Colors.white,
-                //     fontWeight: FontWeight.w500,
-                //     fontSize: 20,
-                //   ),
-                // ),
+                // score
+                Text(
+                  'Score : $currentScore',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 20,
+                  ),
+                ),
 
                 //rotate
                 IconButton(
