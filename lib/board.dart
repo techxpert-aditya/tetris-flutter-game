@@ -53,7 +53,7 @@ class _GameBoardState extends State<GameBoard> {
 
     // frame refresh rate
     Duration frameRate = const Duration(milliseconds: 600);
-    gameLoop(frameRate);
+    // gameLoop(frameRate);
   }
 
   void gameLoop(Duration frameRate) {
@@ -237,107 +237,146 @@ class _GameBoardState extends State<GameBoard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0C134F),
-      body: Column(
-        children: [
-          //GAME  GRID
-          Expanded(
-            child: GridView.builder(
-                itemCount: rowLength * colLength,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: rowLength),
-                itemBuilder: (context, index) {
-                  // get row and col of each index
-                  int row = (index / rowLength).floor();
-                  int col = (index % rowLength);
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // GAME LOGO
+            const Expanded(
+              child: Center(
+                child: Text(
+                  'Tetris',
+                ),
+              ),
+            ),
+            //GAME  GRID
+            Expanded(
+              flex: 5,
+              child: Container(
+                margin: const EdgeInsets.only(
+                    top: 10, right: 40, left: 40, bottom: 35),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF222831),
+                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      top: 50, left: 10, right: 10, bottom: 48),
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      border: Border.symmetric(
+                        horizontal: BorderSide(
+                          width: 1.0,
+                          color: Color(0xFF393E46),
+                        ),
+                      ),
+                    ),
+                    child: GridView.builder(
+                        itemCount: rowLength * colLength,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: rowLength),
+                        itemBuilder: (context, index) {
+                          // get row and col of each index
+                          int row = (index / rowLength).floor();
+                          int col = (index % rowLength);
 
-                  //current piece
-                  if (currentPiece.position.contains(index)) {
-                    return Pixel(
-                      colour: tetromioColors[currentPiece.type] ?? Colors.white,
-                      childWidget: index,
-                    );
-                  }
+                          //current piece
+                          if (currentPiece.position.contains(index)) {
+                            return Pixel(
+                              colour: tetromioColors[currentPiece.type] ??
+                                  Colors.white,
+                              childWidget: index,
+                            );
+                          }
 
-                  // landed piece
-                  else if (gameBoard[row][col] != null) {
-                    final Tetromino? tetrominoType = gameBoard[row][col];
-                    return Pixel(
-                        colour: tetromioColors[tetrominoType] ?? Colors.white,
-                        childWidget: index);
-                  }
+                          // landed piece
+                          else if (gameBoard[row][col] != null) {
+                            final Tetromino? tetrominoType =
+                                gameBoard[row][col];
+                            return Pixel(
+                                colour: tetromioColors[tetrominoType] ??
+                                    Colors.white,
+                                childWidget: index);
+                          }
 
-                  // blank pixel
-                  else {
-                    return Pixel(
-                        colour: const Color(0xFF1D267D), childWidget: index);
-                  }
-                }),
-          ),
+                          // blank pixel
+                          else {
+                            return Pixel(
+                                colour: Colors.transparent, childWidget: index);
+                          }
+                        }),
+                  ),
+                ),
+              ),
+            ),
 
-          // GAME CONTROLS
-          Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // left and right Buttons
-                Row(
+            // GAME CONTROLS
+            Expanded(
+              flex: 1,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    //left
-                    IconButton(
-                      onPressed: moveLeft,
-                      icon: const Icon(
-                        Icons.arrow_back_ios,
-                        color: Colors.white,
+                    // left and right Buttons
+                    Row(
+                      children: [
+                        //left
+                        IconButton(
+                          onPressed: moveLeft,
+                          icon: const Icon(
+                            Icons.arrow_back_ios,
+                            // color: Colors.white,
+                          ),
+                        ),
+
+                        // right
+                        IconButton(
+                          onPressed: moveRight,
+                          icon: const Icon(
+                            Icons.arrow_forward_ios,
+                            // color: Colors.white,
+                          ),
+                        ),
+
+                        // down
+                        IconButton(
+                          onPressed: moveDown,
+                          icon: const Icon(
+                            Icons.keyboard_arrow_down,
+                            // color: Colors.white,
+                            size: 30,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    // score
+                    Text(
+                      'Score : $currentScore',
+                      style: const TextStyle(
+                        // color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 20,
                       ),
                     ),
 
-                    // right
+                    //rotate
                     IconButton(
-                      onPressed: moveRight,
+                      onPressed: rotatePiece,
                       icon: const Icon(
-                        Icons.arrow_forward_ios,
-                        color: Colors.white,
-                      ),
-                    ),
-
-                    // down
-                    IconButton(
-                      onPressed: moveDown,
-                      icon: const Icon(
-                        Icons.keyboard_arrow_down,
-                        color: Colors.white,
+                        Icons.rotate_right,
+                        // color: Colors.white,
                         size: 30,
                       ),
                     ),
                   ],
                 ),
-
-                // score
-                Text(
-                  'Score : $currentScore',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 20,
-                  ),
-                ),
-
-                //rotate
-                IconButton(
-                  onPressed: rotatePiece,
-                  icon: const Icon(
-                    Icons.rotate_right,
-                    color: Colors.white,
-                    size: 30,
-                  ),
-                ),
-              ],
-            ),
-          )
-        ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

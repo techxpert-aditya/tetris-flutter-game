@@ -13,14 +13,6 @@ class Pixel extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
       ),
       margin: const EdgeInsets.all(1),
-      child: Center(
-        child: Text(
-          childWidget.toString(),
-          style: const TextStyle(
-            color: Colors.white,
-          ),
-        ),
-      ),
     );
   }
 }
