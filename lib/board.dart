@@ -31,7 +31,19 @@ class GameBoard extends StatefulWidget {
   State<GameBoard> createState() => _GameBoardState();
 }
 
+// enums for the swipe implimentation
+enum SwipeDirection {
+  none,
+  left,
+  right,
+  up,
+  down,
+}
+
 class _GameBoardState extends State<GameBoard> {
+  // swipe direction
+  SwipeDirection swipeDirection = SwipeDirection.none;
+
   // current tetris piece
   Piece currentPiece = Piece(type: Tetromino.L);
 
@@ -53,7 +65,7 @@ class _GameBoardState extends State<GameBoard> {
 
     // frame refresh rate
     Duration frameRate = const Duration(milliseconds: 600);
-    // gameLoop(frameRate);
+    gameLoop(frameRate);
   }
 
   void gameLoop(Duration frameRate) {
@@ -234,169 +246,262 @@ class _GameBoardState extends State<GameBoard> {
     return false;
   }
 
+  // Gesture recognition callbacks
+  void onSwipeLeft() {
+    if (swipeDirection != SwipeDirection.left) {
+      swipeDirection = SwipeDirection.left;
+      moveLeft();
+    }
+  }
+
+  void onSwipeRight() {
+    if (swipeDirection != SwipeDirection.right) {
+      swipeDirection = SwipeDirection.right;
+      moveRight();
+    }
+  }
+
+  void onSwipeDown() {
+    if (swipeDirection != SwipeDirection.down) {
+      swipeDirection = SwipeDirection.down;
+      moveDown();
+    }
+  }
+
+  void onSwipeUp() {
+    if (swipeDirection != SwipeDirection.up) {
+      swipeDirection = SwipeDirection.up;
+      rotatePiece();
+    }
+  }
+
+  void resetSwipe() {
+    swipeDirection = SwipeDirection.none;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
-          children: [
-            // GAME LOGO
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 100),
-                child: Center(
+        child: GestureDetector(
+          // Handle swipe gestures
+          onHorizontalDragUpdate: (details) {
+            if (details.delta.dx > 0) {
+              onSwipeRight();
+            } else {
+              onSwipeLeft();
+            }
+          },
+          onVerticalDragUpdate: (details) {
+            if (details.delta.dy > 0) {
+              onSwipeDown();
+            } else {
+              onSwipeUp();
+            }
+          },
+          onHorizontalDragEnd: (_) {
+            resetSwipe();
+          },
+          onVerticalDragEnd: (_) {
+            resetSwipe();
+          },
+
+          child: Column(
+            children: [
+              // GAME LOGO
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 100),
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Image.asset(
+                          'images/tetris_outlined.png',
+                          width: 50,
+                        ),
+                        const Text(
+                          ':',
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
+                        ),
+                        Text(
+                          currentScore.toString(),
+                          style: const TextStyle(
+                            fontSize: 70,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              //GAME  GRID
+              Expanded(
+                flex: 5,
+                child: Container(
+                  margin: const EdgeInsets.only(
+                      top: 10, right: 40, left: 40, bottom: 35),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF222831),
+                    borderRadius: BorderRadius.all(Radius.circular(30)),
+                  ),
+                  child: Material(
+                    elevation: 10,
+                    borderRadius: const BorderRadius.all(Radius.circular(30)),
+                    color: Colors.transparent,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          top: 50, left: 10, right: 10, bottom: 48),
+                      child: Material(
+                        elevation: 5,
+                        color: Colors.transparent,
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            border: Border.symmetric(
+                              horizontal: BorderSide(
+                                width: 1.0,
+                                color: Color(0xFF393E46),
+                              ),
+                            ),
+                          ),
+                          child: GridView.builder(
+                              itemCount: rowLength * colLength,
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: rowLength),
+                              itemBuilder: (context, index) {
+                                // get row and col of each index
+                                int row = (index / rowLength).floor();
+                                int col = (index % rowLength);
+
+                                //current piece
+                                if (currentPiece.position.contains(index)) {
+                                  return Pixel(
+                                    colour: tetromioColors[currentPiece.type] ??
+                                        Colors.white,
+                                    childWidget: index,
+                                  );
+                                }
+
+                                // landed piece
+                                else if (gameBoard[row][col] != null) {
+                                  final Tetromino? tetrominoType =
+                                      gameBoard[row][col];
+                                  return Pixel(
+                                      colour: tetromioColors[tetrominoType] ??
+                                          Colors.white,
+                                      childWidget: index);
+                                }
+
+                                // blank pixel
+                                else {
+                                  return Pixel(
+                                      colour: Colors.transparent,
+                                      childWidget: index);
+                                }
+                              }),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              // GAME CONTROLS
+              Expanded(
+                flex: 1,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.only(left: 60, right: 60, bottom: 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Image.asset(
-                        'images/tetris.png',
-                        width: 50,
+                      // left and right Buttons
+                      Row(
+                        children: [
+                          //left
+                          ElevatedButton(
+                            style: ButtonStyle(
+                              fixedSize:
+                                  MaterialStateProperty.all(const Size(50, 50)),
+                              elevation: MaterialStateProperty.all(5),
+                              backgroundColor: MaterialStateProperty.all(
+                                  const Color(0xFF393E46)),
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(20),
+                                      topRight: Radius.circular(0),
+                                      bottomLeft: Radius.circular(20),
+                                      bottomRight: Radius.circular(0)),
+                                ),
+                              ),
+                            ),
+                            onPressed: moveLeft,
+                            child: const Icon(
+                              Icons.arrow_back_ios,
+                              // color: Colors.white,
+                            ),
+                          ),
+
+                          // right
+                          ElevatedButton(
+                            style: ButtonStyle(
+                              fixedSize:
+                                  MaterialStateProperty.all(const Size(50, 50)),
+                              elevation: MaterialStateProperty.all(5),
+                              backgroundColor: MaterialStateProperty.all(
+                                  const Color(0xFF393E46)),
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(0),
+                                      topRight: Radius.circular(20),
+                                      bottomLeft: Radius.circular(0),
+                                      bottomRight: Radius.circular(20)),
+                                ),
+                              ),
+                            ),
+                            onPressed: moveRight,
+                            child: const Icon(
+                              Icons.arrow_forward_ios,
+                              // color: Colors.white,
+                            ),
+                          ),
+
+                          // down
+                          IconButton(
+                            onPressed: moveDown,
+                            icon: const Icon(
+                              Icons.keyboard_arrow_down,
+                              // color: Colors.white,
+                              size: 30,
+                            ),
+                          ),
+                        ],
                       ),
-                      const Text(
-                        ':',
-                        style: TextStyle(
-                          fontSize: 20,
-                        ),
-                      ),
-                      Text(
-                        currentScore.toString(),
-                        style: const TextStyle(
-                          fontSize: 70,
+
+                      //rotate
+                      IconButton(
+                        onPressed: rotatePiece,
+                        icon: const Icon(
+                          Icons.rotate_right,
+                          // color: Colors.white,
+                          size: 30,
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
-            ),
-            //GAME  GRID
-            Expanded(
-              flex: 5,
-              child: Container(
-                margin: const EdgeInsets.only(
-                    top: 10, right: 40, left: 40, bottom: 35),
-                decoration: const BoxDecoration(
-                  color: Color(0xFF222831),
-                  borderRadius: BorderRadius.all(Radius.circular(30)),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      top: 50, left: 10, right: 10, bottom: 48),
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      border: Border.symmetric(
-                        horizontal: BorderSide(
-                          width: 1.0,
-                          color: Color(0xFF393E46),
-                        ),
-                      ),
-                    ),
-                    child: GridView.builder(
-                        itemCount: rowLength * colLength,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: rowLength),
-                        itemBuilder: (context, index) {
-                          // get row and col of each index
-                          int row = (index / rowLength).floor();
-                          int col = (index % rowLength);
-
-                          //current piece
-                          if (currentPiece.position.contains(index)) {
-                            return Pixel(
-                              colour: tetromioColors[currentPiece.type] ??
-                                  Colors.white,
-                              childWidget: index,
-                            );
-                          }
-
-                          // landed piece
-                          else if (gameBoard[row][col] != null) {
-                            final Tetromino? tetrominoType =
-                                gameBoard[row][col];
-                            return Pixel(
-                                colour: tetromioColors[tetrominoType] ??
-                                    Colors.white,
-                                childWidget: index);
-                          }
-
-                          // blank pixel
-                          else {
-                            return Pixel(
-                                colour: Colors.transparent, childWidget: index);
-                          }
-                        }),
-                  ),
-                ),
-              ),
-            ),
-
-            // GAME CONTROLS
-            Expanded(
-              flex: 1,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // left and right Buttons
-                    Row(
-                      children: [
-                        //left
-                        IconButton(
-                          onPressed: moveLeft,
-                          icon: const Icon(
-                            Icons.arrow_back_ios,
-                            // color: Colors.white,
-                          ),
-                        ),
-
-                        // right
-                        IconButton(
-                          onPressed: moveRight,
-                          icon: const Icon(
-                            Icons.arrow_forward_ios,
-                            // color: Colors.white,
-                          ),
-                        ),
-
-                        // down
-                        IconButton(
-                          onPressed: moveDown,
-                          icon: const Icon(
-                            Icons.keyboard_arrow_down,
-                            // color: Colors.white,
-                            size: 30,
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    // score
-                    Text(
-                      'Score : $currentScore',
-                      style: const TextStyle(
-                        // color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 20,
-                      ),
-                    ),
-
-                    //rotate
-                    IconButton(
-                      onPressed: rotatePiece,
-                      icon: const Icon(
-                        Icons.rotate_right,
-                        // color: Colors.white,
-                        size: 30,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );
