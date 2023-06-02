@@ -242,10 +242,31 @@ class _GameBoardState extends State<GameBoard> {
         child: Column(
           children: [
             // GAME LOGO
-            const Expanded(
-              child: Center(
-                child: Text(
-                  'Tetris',
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 100),
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Image.asset(
+                        'images/tetris.png',
+                        width: 50,
+                      ),
+                      const Text(
+                        ':',
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
+                      ),
+                      Text(
+                        currentScore.toString(),
+                        style: const TextStyle(
+                          fontSize: 70,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
