@@ -2,9 +2,10 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:tetris/piece.dart';
-import 'package:tetris/pixel.dart';
-import 'package:tetris/values.dart';
+import 'package:tetris/game_components/piece.dart';
+import 'package:tetris/game_components/pixel.dart';
+import 'package:tetris/game_components/values.dart';
+import 'package:tetris/constants.dart';
 
 /*
 
@@ -66,7 +67,7 @@ class _GameBoardState extends State<GameBoard> {
 
     // frame refresh rate
     Duration frameRate = const Duration(milliseconds: 600);
-    // gameLoop(frameRate);
+    gameLoop(frameRate);
   }
 
   void gameLoop(Duration frameRate) {
@@ -318,9 +319,12 @@ class _GameBoardState extends State<GameBoard> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Image.asset(
-                          'images/tetris_outlined.png',
-                          width: 50,
+                        Hero(
+                          tag: 'logo',
+                          child: Image.asset(
+                            'images/tetris_outlined.png',
+                            width: 50,
+                          ),
                         ),
                         const Text(
                           ':',
@@ -426,23 +430,17 @@ class _GameBoardState extends State<GameBoard> {
                         children: [
                           //left
                           ElevatedButton(
-                            style: ButtonStyle(
-                              fixedSize:
-                                  MaterialStateProperty.all(const Size(50, 50)),
-                              elevation: MaterialStateProperty.all(5),
-                              backgroundColor: MaterialStateProperty.all(
-                                  const Color(0xFF393E46)),
-                              shape: MaterialStateProperty.all<
-                                  RoundedRectangleBorder>(
-                                const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(20),
-                                      topRight: Radius.circular(0),
-                                      bottomLeft: Radius.circular(20),
-                                      bottomRight: Radius.circular(0)),
-                                ),
+                            style: kMovingButtonStyle.copyWith(
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                              const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(20),
+                                    topRight: Radius.circular(0),
+                                    bottomLeft: Radius.circular(20),
+                                    bottomRight: Radius.circular(0)),
                               ),
-                            ),
+                            )),
                             onPressed: moveLeft,
                             child: const Icon(
                               Icons.arrow_back_ios,
@@ -452,23 +450,17 @@ class _GameBoardState extends State<GameBoard> {
 
                           // right
                           ElevatedButton(
-                            style: ButtonStyle(
-                              fixedSize:
-                                  MaterialStateProperty.all(const Size(50, 50)),
-                              elevation: MaterialStateProperty.all(5),
-                              backgroundColor: MaterialStateProperty.all(
-                                  const Color(0xFF393E46)),
-                              shape: MaterialStateProperty.all<
-                                  RoundedRectangleBorder>(
-                                const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(0),
-                                      topRight: Radius.circular(20),
-                                      bottomLeft: Radius.circular(0),
-                                      bottomRight: Radius.circular(20)),
-                                ),
+                            style: kMovingButtonStyle.copyWith(
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                              const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(0),
+                                    topRight: Radius.circular(20),
+                                    bottomLeft: Radius.circular(0),
+                                    bottomRight: Radius.circular(20)),
                               ),
-                            ),
+                            )),
                             onPressed: moveRight,
                             child: const Icon(
                               Icons.arrow_forward_ios,

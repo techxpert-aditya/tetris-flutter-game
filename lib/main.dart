@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tetris/home.dart';
-import 'board.dart';
+import 'screens/board.dart';
+import 'screens/home.dart';
 
 void main() {
   runApp(const MyApp());

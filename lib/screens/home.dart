@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:tetris/constants.dart';
+import 'package:tetris/screens/board.dart';
 
 class HomeScreen extends StatelessWidget {
   static const String id = "home_screen";
@@ -14,34 +16,46 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image.asset(
-              'images/tetris.png',
-              scale: 4.0,
+            Hero(
+              tag: 'logo',
+              child: Image.asset(
+                'images/tetris.png',
+                scale: 4.0,
+              ),
             ),
             const SizedBox(
               height: 50,
             ),
             const Text(
               'TETRIS',
-              style: TextStyle(
-                fontSize: 50,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'tetris_fonts',
-              ),
+              style: kHomeScreenDisplayTextStyle,
             ),
             const SizedBox(
               height: 100,
             ),
             ElevatedButton(
-              onPressed: () {},
+              style: kHomeScreenElevatedButtonStyle,
+              onPressed: () {
+                Navigator.pushNamed(context, GameBoard.id);
+              },
               child: const Text(
-                'Start game',
+                'PLAY',
+                style: TextStyle(
+                  fontSize: 18,
+                ),
               ),
             ),
+            const SizedBox(
+              height: 15,
+            ),
             ElevatedButton(
+              style: kHomeScreenElevatedButtonStyle,
               onPressed: () {},
               child: const Text(
-                'Leader board',
+                'LEADERBOARD',
+                style: TextStyle(
+                  fontSize: 18,
+                ),
               ),
             ),
           ],
