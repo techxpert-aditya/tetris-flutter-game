@@ -25,6 +25,7 @@ List<List<Tetromino?>> gameBoard = List.generate(
 );
 
 class GameBoard extends StatefulWidget {
+  static const String id = "board_screen";
   const GameBoard({super.key});
 
   @override
@@ -65,7 +66,7 @@ class _GameBoardState extends State<GameBoard> {
 
     // frame refresh rate
     Duration frameRate = const Duration(milliseconds: 600);
-    gameLoop(frameRate);
+    // gameLoop(frameRate);
   }
 
   void gameLoop(Duration frameRate) {
