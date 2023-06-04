@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tetris/constants.dart';
+import 'package:tetris/screens/board.dart';
+import 'package:tetris/screens/home.dart';
 
 class Score extends StatelessWidget {
   static const String id = "score_screen";
@@ -7,6 +9,7 @@ class Score extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final int userScore = ModalRoute.of(context)?.settings.arguments as int;
     return Scaffold(
       backgroundColor: const Color(0xFF222831),
       body: SafeArea(
@@ -46,9 +49,9 @@ class Score extends StatelessWidget {
                 const SizedBox(
                   height: 5,
                 ),
-                const Text(
-                  '2456',
-                  style: TextStyle(
+                Text(
+                  userScore.toString(),
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 45,
                     fontWeight: FontWeight.w700,
@@ -71,7 +74,9 @@ class Score extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushNamed(context, HomeScreen.id);
+                    },
                     child: const Text(
                       'BACK TO HOME',
                       style: TextStyle(
@@ -84,7 +89,9 @@ class Score extends StatelessWidget {
                   ),
                   ElevatedButton(
                     style: kScoreScreenPlayButtonStyle,
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, GameBoard.id);
+                    },
                     child: const Padding(
                       padding: EdgeInsets.all(15.0),
                       child: Text(

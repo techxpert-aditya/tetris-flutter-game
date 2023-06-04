@@ -6,6 +6,7 @@ import 'package:tetris/game_components/piece.dart';
 import 'package:tetris/game_components/pixel.dart';
 import 'package:tetris/game_components/values.dart';
 import 'package:tetris/constants.dart';
+import 'package:tetris/screens/score.dart';
 
 /*
 
@@ -81,7 +82,13 @@ class _GameBoardState extends State<GameBoard> {
         //check if game is over or not
         if (gameOver == true) {
           timer.cancel();
-          showGameOverDialog();
+          resetGame();
+          Navigator.pushReplacementNamed(
+            context,
+            Score.id,
+            arguments: currentScore,
+          );
+          // showGameOverDialog();
         }
         // move the current piece down
         currentPiece.movePiece(Direction.down);
@@ -123,13 +130,13 @@ class _GameBoardState extends State<GameBoard> {
 
     //new game
     gameOver = false;
-    currentScore = 0;
+    // currentScore = 0;
 
     // create new Piece
     createNewPiece();
 
     // start game again
-    startGame();
+    // startGame();
   }
 
   // check for collision in a future position
