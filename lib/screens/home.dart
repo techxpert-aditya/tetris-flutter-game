@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tetris/constants.dart';
 import 'package:tetris/screens/board.dart';
+import 'about.dart';
 
 class HomeScreen extends StatelessWidget {
   static const String id = "home_screen";
@@ -50,9 +51,11 @@ class HomeScreen extends StatelessWidget {
             ),
             ElevatedButton(
               style: kHomeScreenElevatedButtonStyle,
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, About.id);
+              },
               child: const Text(
-                'LEADERBOARD',
+                'ABOUT',
                 style: TextStyle(
                   fontSize: 18,
                 ),

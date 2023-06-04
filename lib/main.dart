@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'screens/board.dart';
 import 'screens/home.dart';
 import 'screens/score.dart';
+import 'screens/about.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +19,8 @@ class MyApp extends StatelessWidget {
       routes: {
         HomeScreen.id: (context) => const HomeScreen(),
         GameBoard.id: (context) => const GameBoard(),
-        Score.id: (context) => const Score()
+        Score.id: (context) => const Score(),
+        About.id: (context) => const About()
       },
     );
   }
