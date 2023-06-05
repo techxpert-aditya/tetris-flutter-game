@@ -95,6 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ElevatedButton(
                   style: kHomeScreenElevatedButtonStyle,
                   onPressed: () {
+                    toggleMusic();
                     Navigator.pushNamed(context, GameBoard.id);
                   },
                   child: const Text(
