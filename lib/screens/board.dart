@@ -7,6 +7,7 @@ import 'package:tetris/game_components/pixel.dart';
 import 'package:tetris/game_components/values.dart';
 import 'package:tetris/constants.dart';
 import 'package:tetris/screens/score.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 /*
 
@@ -47,6 +48,9 @@ class _GameBoardState extends State<GameBoard> {
   // swipe direction
   SwipeDirection swipeDirection = SwipeDirection.none;
 
+  //audio player
+  final player = AudioPlayer();
+
   // current tetris piece
   Piece currentPiece = Piece(type: Tetromino.L);
 
@@ -64,6 +68,7 @@ class _GameBoardState extends State<GameBoard> {
   }
 
   void startGame() {
+    player.play(AssetSource('tetris_gameStart.wav'));
     currentPiece.initializePiece();
 
     // frame refresh rate
@@ -83,6 +88,9 @@ class _GameBoardState extends State<GameBoard> {
         if (gameOver == true) {
           timer.cancel();
           resetGame();
+
+          // play game over song
+          player.play(AssetSource('tetris_gameOver.wav'));
           Navigator.pushReplacementNamed(
             context,
             Score.id,
@@ -189,6 +197,11 @@ class _GameBoardState extends State<GameBoard> {
       }
 
       // once the piece is landed, we need to create a new piece
+
+      // first play the landing sound
+      player.play(AssetSource('tetris_landing.wav'));
+
+      //then create the new piece
       createNewPiece();
     }
   }
@@ -236,6 +249,8 @@ class _GameBoardState extends State<GameBoard> {
         // step 6: set the top row to empty
         gameBoard[0] = List.generate(row, (index) => null);
 
+        // also play the sound of line clear
+        player.play(AssetSource('tetris_clearLine.wav'));
         // step 7: increase the score
         currentScore += 10;
       }
@@ -508,6 +523,7 @@ class _GameBoardState extends State<GameBoard> {
   }
 
   void moveLeft() {
+    player.play(AssetSource('tetris_move.wav'));
     // make sure the move is valid before moving there
     if (!checkCollision(Direction.left)) {
       setState(() {
@@ -517,6 +533,7 @@ class _GameBoardState extends State<GameBoard> {
   }
 
   void moveRight() {
+    player.play(AssetSource('tetris_move.wav'));
     // make sure the move is valid before moving there
     if (!checkCollision(Direction.right)) {
       setState(() {
@@ -526,6 +543,7 @@ class _GameBoardState extends State<GameBoard> {
   }
 
   void moveDown() {
+    player.play(AssetSource('tetris_move.wav'));
     // make sure the move is valid before moving there
     if (!checkCollision(Direction.down)) {
       setState(() {

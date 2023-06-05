@@ -5,7 +5,7 @@ const kHomeScreenDisplayTextStyle = TextStyle(
   fontSize: 50,
   fontWeight: FontWeight.w900,
   fontFamily: 'tetris_fonts',
-  color: Color(0xFF393E46),
+  color: Color(0xFF222831),
   // color: Colors.white,
 );
 

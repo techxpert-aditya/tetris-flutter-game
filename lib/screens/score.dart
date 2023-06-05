@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tetris/constants.dart';
 import 'package:tetris/screens/board.dart';
-import 'package:tetris/screens/home.dart';
 
 class Score extends StatelessWidget {
   static const String id = "score_screen";
@@ -75,7 +74,7 @@ class Score extends StatelessWidget {
                 children: [
                   TextButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, HomeScreen.id);
+                      Navigator.pop(context);
                     },
                     child: const Text(
                       'BACK TO HOME',
@@ -85,7 +84,7 @@ class Score extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(
-                    width: 40,
+                    width: 20,
                   ),
                   ElevatedButton(
                     style: kScoreScreenPlayButtonStyle,

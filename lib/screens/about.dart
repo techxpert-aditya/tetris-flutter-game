@@ -105,7 +105,7 @@ class _AboutState extends State<About> with SingleTickerProviderStateMixin {
                                     color: Colors.white,
                                     fontFamily: 'Montserrat',
                                   ),
-                                  speed: const Duration(milliseconds: 50),
+                                  speed: const Duration(milliseconds: 25),
                                 ),
                               ],
                               totalRepeatCount: 1,
@@ -131,7 +131,7 @@ class _AboutState extends State<About> with SingleTickerProviderStateMixin {
 
                 //footer
                 const Text(
-                  'C R E A T E D B Y A D I',
+                  'C R E A T E D . B Y . A D I',
                   style: TextStyle(
                       fontFamily: 'Montserrat', fontWeight: FontWeight.w600),
                 ),
