@@ -4,6 +4,7 @@
 # Tetris
 
 Recreate the classic arcade game of Tetris with a beautiful UI using Flutter.
+[Download the App](https://github.com/techxpert-aditya/tetris-flutter-game/blob/master/app-release.apk)
 
 ## Overview
 
